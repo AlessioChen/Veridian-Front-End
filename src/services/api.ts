@@ -35,6 +35,7 @@ export const sendMessageToChat = async (message: string): Promise<ReadableStream
         }
 
         return response.body;
+
     } catch (error) {
         console.error('Error sending message to chat API:', error);
         return null;
