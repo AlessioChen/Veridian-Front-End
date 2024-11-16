@@ -18,3 +18,25 @@ export const uploadAudioToServer = async (audioBlob: Blob): Promise<string | nul
         return 'Error uploading audio.';
     }
 };
+
+export const sendMessageToChat = async (message: string): Promise<ReadableStream<Uint8Array> | null> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message }),
+        });
+
+        if (!response) {
+            console.error('Error communicating with chat API:', response);
+            return null;
+        }
+
+        return response.body;
+    } catch (error) {
+        console.error('Error sending message to chat API:', error);
+        return null;
+    }
+};
