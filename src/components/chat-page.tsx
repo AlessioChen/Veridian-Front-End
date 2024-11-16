@@ -1,15 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { sendMessageToChat } from '@/services/api'
+import { sendMessageToChat, uploadAudioToServer } from '@/services/api'
+import { Mic, Square } from 'lucide-react'
 
 type Message = {
     id: number
     text: string
     sender: 'user' | 'bot'
+    isAudio?: boolean,
+    audioUrl?: string,
 }
 
 export default function ChatPage() {
@@ -18,52 +21,97 @@ export default function ChatPage() {
     ])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
+    const [isRecording, setIsRecording] = useState(false)
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const audioChunksRef = useRef<Blob[]>([])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (input.trim()) {
-            const userMessage: Message = {
-                id: messages.length + 1,
-                text: input.trim(),
-                sender: 'user'
-            }
-            setMessages([...messages, userMessage])
+            await sendMessage(input.trim())
             setInput('')
-            setLoading(true)
+        }
+    }
 
-            try {
-                const chatStream = await sendMessageToChat(userMessage.text)
-                if (chatStream) {
-                    const reader = chatStream.getReader()
-                    const decoder = new TextDecoder('utf-8')
-                    let botResponseText = ''
+    const sendMessage = async (text: string, isAudio: boolean = false, audioUrl='') => {
+        const userMessage: Message = {
+            id: messages.length + 1,
+            text: text,
+            sender: 'user',
+            isAudio,
+            audioUrl
+        }
+        setMessages((prev) => [...prev, userMessage])
+        setLoading(true)
 
-                    // Read the stream completely
-                    while (true) {
-                        const { value, done } = await reader.read()
-                        if (done) break
-                        botResponseText += decoder.decode(value, { stream: true })
-                    }
+        try {
+            const chatStream = await sendMessageToChat(text)
+            if (chatStream) {
+                const reader = chatStream.getReader()
+                const decoder = new TextDecoder('utf-8')
+                let botResponseText = ''
 
-                    // Update messages after the stream is fully read
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { id: prevMessages.length + 1, text: botResponseText, sender: 'bot' }
-                    ])
+                while (true) {
+                    const { value, done } = await reader.read()
+                    if (done) break
+                    botResponseText += decoder.decode(value, { stream: true })
                 }
-            } catch (error) {
-                console.error('Error fetching bot response:', error)
+
                 setMessages((prevMessages) => [
                     ...prevMessages,
-                    {
-                        id: prevMessages.length + 1,
-                        text: "Sorry, something went wrong. Please try again later.",
-                        sender: 'bot'
-                    }
+                    { id: prevMessages.length + 1, text: botResponseText, sender: 'bot' }
                 ])
-            } finally {
-                setLoading(false)
             }
+        } catch (error) {
+            console.error('Error fetching bot response:', error)
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                {
+                    id: prevMessages.length + 1,
+                    text: "Sorry, something went wrong. Please try again later.",
+                    sender: 'bot'
+                }
+            ])
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const startRecording = async () => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            mediaRecorderRef.current = new MediaRecorder(stream)
+            audioChunksRef.current = []
+
+            mediaRecorderRef.current.ondataavailable = (event) => {
+                audioChunksRef.current.push(event.data)
+            }
+
+            mediaRecorderRef.current.onstop = async () => {
+                const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' })
+
+                try {
+                    const transcript = await uploadAudioToServer(audioBlob)
+                    if (transcript) {
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        await sendMessage(transcript, true, audioUrl)
+                    }
+                } catch (error) {
+                    console.error('Error handling audio transcript:', error)
+                }
+            }
+
+            mediaRecorderRef.current.start()
+            setIsRecording(true)
+        } catch (error) {
+            console.error('Error starting recording:', error)
+        }
+    }
+
+    const stopRecording = () => {
+        if (mediaRecorderRef.current && isRecording) {
+            mediaRecorderRef.current.stop()
+            setIsRecording(false)
         }
     }
 
@@ -80,7 +128,13 @@ export default function ChatPage() {
                                 : 'bg-gray-200 text-gray-800 self-start'
                         }`}
                     >
-                        {message.text}
+
+                        { message.text}
+                        {/*{message.isAudio ? (*/}
+                        {/*    <audio src={message.audioUrl} controls className="w-full" />*/}
+                        {/*) : (*/}
+                        {/*    message.text*/}
+                        {/*)}*/}
                     </div>
                 ))}
                 {loading && (
@@ -97,8 +151,16 @@ export default function ChatPage() {
                     placeholder="Type your message..."
                     className="flex-grow"
                 />
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={loading || isRecording}>
                     {loading ? 'Sending...' : 'Send'}
+                </Button>
+                <Button
+                    type="button"
+                    onClick={isRecording ? stopRecording : startRecording}
+                    disabled={loading}
+                    variant="outline"
+                >
+                    {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
                 </Button>
             </form>
         </div>
