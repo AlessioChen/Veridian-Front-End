@@ -22,49 +22,33 @@ export const uploadAudioToServer = async (
   }
 };
 
-export const sendMessageToChat = async (message: string) => {
+export const sendMessageToChat = async (
+  message: string,
+  includeProfile: boolean = false
+) => {
   try {
+    const body = includeProfile
+      ? {
+          message: message,
+          user_profile: userProfile,
+        }
+      : {
+          message: message,
+        };
+
     const response = await fetch(`${API_BASE_URL}/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        message: message,
-      }),
+      body: JSON.stringify(body),
     });
 
     const data = await response.json();
-
     if (!data) {
       console.error("Error communicating with chat API:", response);
       return null;
     }
-
-    return data;
-  } catch (error) {
-    console.error("Error sending message to chat API:", error);
-    return null;
-  }
-};
-
-export const getUserProfileSuggestion = async (skills: string) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/user-profile`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userProfile(skills)),
-    });
-
-    const data = await response.json();
-
-    if (!data) {
-      console.error("Error communicating with chat API:", response);
-      return null;
-    }
-
     return data;
   } catch (error) {
     console.error("Error sending message to chat API:", error);

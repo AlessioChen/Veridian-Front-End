@@ -5,11 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  getUserProfileSuggestion,
-  sendMessageToChat,
-  uploadAudioToServer,
-} from "@/services/api";
+import { sendMessageToChat, uploadAudioToServer } from "@/services/api";
 import { Mic, Square } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -37,19 +33,10 @@ export default function ChatPage() {
   useEffect(() => {
     const fetchInitialMessage = async () => {
       setLoading(true);
-
-      const skills = searchParams.get("skills");
-      let skillsData = "";
-      if (skills) {
-        try {
-          skillsData = decodeURIComponent(skills);
-        } catch (error) {
-          console.error("Error parsing data:", error);
-        }
-      }
-
-      const initialResponse = await getUserProfileSuggestion(skillsData);
-      console.log("IR", initialResponse);
+      const initialResponse = await sendMessageToChat(
+        "Hello, I'd like some advice from the GENERAL Agent.",
+        true
+      );
       setLoading(false);
 
       if (initialResponse) {
@@ -57,7 +44,7 @@ export default function ChatPage() {
           {
             id: 1,
             text:
-              initialResponse.suggestions ||
+              initialResponse.response ||
               "Welcome! How can I assist you today?",
             sender: "bot",
           },
