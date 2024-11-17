@@ -1,6 +1,16 @@
+'use client';
+
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 export default function Component() {
+
+    const router = useRouter();
+
+    const handleSubmit = () => {
+        router.push('/intro');
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="container mx-auto px-8 py-16">
@@ -30,7 +40,8 @@ export default function Component() {
                             strategic action plans.
                         </p>
 
-                        <button className="px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-300 text-white text-xl font-semibold shadow-lg hover:shadow-2xl transition-shadow">
+                        <button className="px-8 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-300 text-white text-xl font-semibold shadow-lg hover:shadow-2xl transition-shadow"
+                            onClick={handleSubmit}>
                             Take first step
                         </button>
                     </div>
