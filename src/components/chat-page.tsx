@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -26,6 +27,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, text: "Hello! How can I assist you today?", sender: "bot" },
   ]);
+  const searchParams = useSearchParams();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -35,7 +37,19 @@ export default function ChatPage() {
   useEffect(() => {
     const fetchInitialMessage = async () => {
       setLoading(true);
-      const initialResponse = await getUserProfileSuggestion();
+
+      const skills = searchParams.get("skills");
+      let skillsData = "";
+      if (skills) {
+        try {
+          skillsData = decodeURIComponent(skills);
+        } catch (error) {
+          console.error("Error parsing data:", error);
+        }
+      }
+
+      const initialResponse = await getUserProfileSuggestion(skillsData);
+      console.log("IR", initialResponse);
       setLoading(false);
 
       if (initialResponse) {
@@ -43,7 +57,8 @@ export default function ChatPage() {
           {
             id: 1,
             text:
-              initialResponse.message || "Welcome! How can I assist you today?",
+              initialResponse.suggestions ||
+              "Welcome! How can I assist you today?",
             sender: "bot",
           },
         ]);
@@ -279,7 +294,6 @@ export default function ChatPage() {
           </ScrollArea>
         </div>
       </div>
-
       <div className="border-t bg-white p-4">
         <div className="max-w-3xl mx-auto">
           <form onSubmit={handleSubmit} className="flex gap-2">
