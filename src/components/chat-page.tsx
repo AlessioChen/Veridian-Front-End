@@ -4,11 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  getUserProfileSuggestion,
-  sendMessageToChat,
-  uploadAudioToServer,
-} from "@/services/api";
+import { sendMessageToChat, uploadAudioToServer } from "@/services/api";
 import { Mic, Square } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -35,7 +31,10 @@ export default function ChatPage() {
   useEffect(() => {
     const fetchInitialMessage = async () => {
       setLoading(true);
-      const initialResponse = await getUserProfileSuggestion();
+      const initialResponse = await sendMessageToChat(
+        "Hello, I'd like some career advice based on my profile.",
+        true
+      );
       setLoading(false);
 
       if (initialResponse) {
@@ -43,7 +42,8 @@ export default function ChatPage() {
           {
             id: 1,
             text:
-              initialResponse.message || "Welcome! How can I assist you today?",
+              initialResponse.response ||
+              "Welcome! How can I assist you today?",
             sender: "bot",
           },
         ]);
