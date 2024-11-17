@@ -20,7 +20,7 @@ export default function Component() {
 
     return (
         <div className="min-h-screen bg-gray-50 flex justify-center">
-            <div className="w-full max-w-lg py-8">
+            <div className="w-full max-w-lg py-8 -mt-8">
                 <header className="mb-4"> {/* Reduced margin-bottom */}
                     <div className="flex items-center gap-2 justify-start">
                         <Image
@@ -32,7 +32,7 @@ export default function Component() {
                     </div>
                 </header>
 
-                <main className="relative flex justify-center">
+                <main className="relative flex justify-center -mt-12">
                     <Card className="bg-white shadow-sm w-full">
                         <CardContent className="p-6 md:p-8 "> {/* Increased height of form */}
                             <form className="space-y-8">

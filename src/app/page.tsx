@@ -13,14 +13,13 @@ export default function Component() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <div className="container mx-auto px-8 py-16">
-                <header className="mb-2">
+            <div className="container mx-auto px-8">
+                <header>
                     <div className="flex items-center gap-4">
                         <Image
                             src="/logo.png"
                             alt="Veridian Logo"
                             width={240}
-                            height={80}
                             className="h-auto"
                         />
                     </div>
