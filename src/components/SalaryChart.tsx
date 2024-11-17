@@ -18,7 +18,7 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 export default function SalaryChart() {
     const [currentSalary, setCurrentSalary] = useState(50000); // Default: $50,000
     const [annualIncrement, setAnnualIncrement] = useState(3); // Default: 3%
-    const [jobChangeIncrement, setJobChangeIncrement] = useState(10); // Default: 10% every 5 years
+    // const [jobChangeIncrement, setJobChangeIncrement] = useState(10); // Default: 10% every 5 years
     const [inflationRate, setInflationRate] = useState(2); // Default: 2%
 
     const calculateTrends = () => {
@@ -37,7 +37,7 @@ export default function SalaryChart() {
 
             // Change trend: Increment higher every 5 years
             if (year % 5 === 0) {
-                changeSalary *= 1 + jobChangeIncrement / 100;
+                // changeSalary *= 1 + jobChangeIncrement / 100;
             } else {
                 changeSalary *= 1 + annualIncrement / 100;
             }

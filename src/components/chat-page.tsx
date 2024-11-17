@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import {useState, useRef, useEffect} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { sendMessageToChat, uploadAudioToServer } from '@/services/api'
+import {getUserProfileSuggestion, sendMessageToChat, uploadAudioToServer} from '@/services/api'
 import { Mic, Square } from 'lucide-react'
 
 type Message = {
@@ -24,6 +24,34 @@ export default function ChatPage() {
     const [isRecording, setIsRecording] = useState(false)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const audioChunksRef = useRef<Blob[]>([])
+
+    useEffect(() => {
+        const fetchInitialMessage = async () => {
+            setLoading(true);
+            const initialResponse = await getUserProfileSuggestion();
+            setLoading(false);
+
+            if (initialResponse) {
+                setMessages([
+                    {
+                        id: 1,
+                        text: initialResponse.message || "Welcome! How can I assist you today?",
+                        sender: 'bot',
+                    },
+                ]);
+            } else {
+                setMessages([
+                    {
+                        id: 1,
+                        text: "Welcome! How can I assist you today?",
+                        sender: 'bot',
+                    },
+                ]);
+            }
+        };
+
+        fetchInitialMessage();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -45,17 +73,10 @@ export default function ChatPage() {
         setLoading(true)
 
         try {
-            const chatStream = await sendMessageToChat(text)
-            if (chatStream) {
-                const reader = chatStream.getReader()
-                const decoder = new TextDecoder('utf-8')
-                let botResponseText = ''
+            const response = await sendMessageToChat(text);
 
-                while (true) {
-                    const { value, done } = await reader.read()
-                    if (done) break
-                    botResponseText += decoder.decode(value, { stream: true })
-                }
+            if (response) {
+                const botResponseText = response.response;
 
                 setMessages((prevMessages) => [
                     ...prevMessages,
