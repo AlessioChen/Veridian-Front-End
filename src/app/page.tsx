@@ -20,6 +20,7 @@ export default function Component() {
                             src="/logo.png"
                             alt="Veridian Logo"
                             width={240}
+                            height={240}
                             className="h-auto"
                         />
                     </div>
