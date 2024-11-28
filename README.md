@@ -1,37 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Veridian Frontend: Social Mobility for Everyone
+Welcome to the Veridian Frontend project! This is a [Next.js](https://nextjs.org/) application. Veridian is an AI-powered platform designed to transform jobs into meaningful careers by analyzing skills, creating personalized plans, and guiding users toward better opportunities.
 
-## Getting Started
+## ✨ Developed at Llama Impact Hackathon – London ✨
+This project was developed during the **Llama Impact Hackathon – London**, held from November 16-18 2024, as part of Meta’s Llama 3.1 Impact Grants program. The event, organized in partnership with **Meta, Cerebral Valley, Nebius, Neon, and Groq**, brought together innovative minds to create impactful projects.
 
-First, run the development server:
+![Veridian Screenshot](image.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌐 Live Demo
+Try out the live application at: (Veridian Frontend)[https://veridian-front-end.vercel.app/]
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
+Follow these steps to run the project locally:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Prerequisites
+Ensure you have the following installed:
 
-## Learn More
+- Node.js (LTS version recommended)
+- npm, yarn, pnpm, or bun (for package management)
 
-To learn more about Next.js, take a look at the following resources:
+###  Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ```
+    git clone https://github.com/AlessioChen/Veridian-Front-End.git
+    ```
+2. Navigate to the project directory:
 
-## Deploy on Vercel
+    ```
+    cd veridian-frontend
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Install dependencies
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# front-end
+    ```
+    npm install
+    ``` 
+
+4. Start the development server:
+
+    ```
+    npm run dev 
+    ```
+
+5. Open Your browswer and visit: [http://localhost:30000](http://localhost:3000)
+
+
+## 🛠 Features
+Skill Analysis
+A user-friendly interface for uploading and reviewing skills and experiences.
+
+## Goal Setting
+Intuitive forms and dashboards for users to define career goals.
+
+## Personalized Career Plans
+Dynamic visualizations of AI-generated career paths tailored to user profiles.
+
+## Progress Tracking
+Interactive progress trackers to keep users informed and motivated.
+
+
+## 🧰 Technologies Used
+- Framework: React + Next.js
+- Styling: Tailwind 
+- APIs : Veridian Backend 
