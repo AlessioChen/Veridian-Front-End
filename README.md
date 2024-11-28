@@ -64,4 +64,4 @@ Interactive progress trackers to keep users informed and motivated.
 ## 🧰 Technologies Used
 - Framework: React + Next.js
 - Styling: Tailwind 
-- APIs : Veridian Backend 
+- APIs : [Veridian Backend](https://github.com/AlessioChen/Veridian-Backend)
